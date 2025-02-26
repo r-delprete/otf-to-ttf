@@ -2,30 +2,36 @@ from fontTools.ttLib import TTFont
 import os
 import shutil
 
-input_dir = r"sf-pro-fonts"
+input_dir = r"input-fonts"
 output_dir = r"output-fonts"
 
 if not os.path.exists(output_dir):
   os.mkdir(output_dir)
 
-for file in os.listdir(input_dir):
-  file_path = os.path.join(input_dir, file)
-  if file.endswith(".ttf"):
-    shutil.copy(file_path, output_dir)
-  else:
-    try:
-      font = TTFont(file_path)
-      output_path = os.path.join(output_dir, file.replace(".otf", ".ttf"))
-      # font.save(output_path)
-      if os.path.exists(output_path):
-        os.remove(output_path)
-      font.save(output_path)
-    except Exception as e:
-      print(f"Errore durante la conversione del file {file}: {e}")
+for root, _, files in os.walk(input_dir):
+  relative_path = os.path.relpath(root, input_dir)
+  output_subdir = os.path.join(output_dir, relative_path)
+  
+  if not os.path.exists(output_subdir):
+    os.makedirs(output_subdir)
 
-output_files = os.listdir(output_dir)
+  for file in files:
+    file_path = os.path.join(root, file)
+    output_path = os.path.join(output_subdir, file.replace(".otf", ".ttf"))
 
-for file in output_files:
-  print(f"{file}")
+    if file.endswith(".ttf"):
+      shutil.copy(file_path, os.path.join(output_subdir, file))
+    elif file.endswith(".otf"):
+      try:
+          if not os.path.exists(output_path):
+            font = TTFont(file_path)
+            font.save(output_path)
+      except Exception as e:
+          print(f"Error converting file {file}: {e}")
 
-print("Conversione completata!")
+for root, _, files in os.walk(output_dir):
+  for file in files:
+    print(os.path.join(root, file))
+
+print("Conversion completed!")
+
