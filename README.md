@@ -5,7 +5,7 @@ Any existing **TTF** files will be skipped during the conversion process.
 
 ## How to Run the Script
 
-1. Add the fonts you want to convert to the **fonts** folder.  
+1. Add the fonts you want to convert to the **input-fonts** folder.  
 2. Run the following commands based on your operating system:
 
 ### Windows
